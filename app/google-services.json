@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "786474796963",
+    "firebase_url": "https://vehicle-71ff1.firebaseio.com",
+    "project_id": "vehicle-71ff1",
+    "storage_bucket": "vehicle-71ff1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786474796963:android:6cee4ae15de57cf5",
+        "android_client_info": {
+          "package_name": "veh.com.veh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786474796963-nvdpp8og47dotfr0tpkd55rrbnqe6r9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2-0h4SM-UUJuVAe_GhvIqoMxfqBfHhKM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
