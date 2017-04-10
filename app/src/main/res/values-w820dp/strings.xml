@@ -2,4 +2,5 @@
 <resources>
     <string name="action_save">Add</string>
     <string name="plate">Enter Plate Number</string>
+    <string name="there_is_no_data">No Data Yet !</string>
 </resources>

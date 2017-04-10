@@ -1,11 +1,17 @@
 <resources>
     <string name="app_name">Vehicle Tracking</string>
     <string name="title_activity_maps">Map</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="sign_out">Sign Out</string>
+    <string name="sign_in">Start Here</string>
     <string name="title_activity_location">LocationActivity</string>
     <string name="title_activity_identification">IdentificationActivity</string>
     <string name="action_save">Add</string>
     <string name="plate">Enter Plate Number</string>
+    <string name="title_activity_list_car">ListCarActivity</string>
+    <string name="there_is_no_data">No Data Yet !</string>
+    <string name="all_cars">All Cars</string>
+
+    <string-array name="menu">
+        <item>Edit</item>
+        <item>Delete</item>
+        </string-array>
 </resources>

@@ -141,14 +141,12 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
                 listPlates = new ArrayList<String>();
 
                 for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    Toast.makeText(getApplicationContext(),"Em is "+em,Toast.LENGTH_LONG).show();
                     if(data.getValue(Identification.class).getEmail().equals(em)){
                         listPlates.add(data.getValue(Identification.class).getPlateId());
                     }
                     else{
                         listPlates.add(notSet);
                     }
-                    Toast.makeText(getApplicationContext(),"plate is "+data.getValue(Identification.class).getEmail(),Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -174,7 +172,6 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
         mFirebaseDatabase.child(userId).setValue(user);
 
         addUserChangeListener();
-        Toast.makeText(getApplicationContext(),"user created", Toast.LENGTH_LONG).show();
     }
 
     private void addUserChangeListener() {
@@ -208,7 +205,7 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
         Location lastLocation = SmartLocation.with(this).location().getLastLocation();
         if (lastLocation != null) {
             locationText.setText(
-                    String.format("[From Cache] Latitude %.6f, Longitude %.6f",
+                    String.format("[Last Saved is:  ] Latitude %.6f, Longitude %.6f",
                             lastLocation.getLatitude(),
                             lastLocation.getLongitude())
             );
@@ -218,11 +215,11 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
 
         DetectedActivity detectedActivity = SmartLocation.with(this).activity().getLastActivity();
         if (detectedActivity != null) {
-            activityText.setText(
-                    String.format("[From Cache] Activity %s with %d%% confidence",
-                            getNameFromType(detectedActivity),
-                            detectedActivity.getConfidence())
-            );
+//            activityText.setText(
+//                    String.format("[From Cache] Activity %s with %d%% confidence",
+//                            getNameFromType(detectedActivity),
+//                            detectedActivity.getConfidence())
+//            );
         }
     }
 
@@ -262,7 +259,7 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
 
     private void showLocation(Location location) {
         if (location != null) {
-            final String text = String.format("Latitude %.6f, Longitude %.6f",
+            final String text = String.format("You are currently situated"+"\n\n\n"+"Latitude %.6f, Longitude %.6f",
                     location.getLatitude(),
                     location.getLongitude());
             locationText.setText(text);
@@ -296,11 +293,11 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
 
     private void showActivity(DetectedActivity detectedActivity) {
         if (detectedActivity != null) {
-            activityText.setText(
-                    String.format("Activity %s with %d%% confidence",
-                            getNameFromType(detectedActivity),
-                            detectedActivity.getConfidence())
-            );
+//            activityText.setText(
+//                    String.format("Activity %s with %d%% confidence",
+//                            getNameFromType(detectedActivity),
+//                            detectedActivity.getConfidence())
+//            );
         } else {
             activityText.setText("Null activity");
         }

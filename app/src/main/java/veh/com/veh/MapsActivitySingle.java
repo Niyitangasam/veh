@@ -10,35 +10,39 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivitySingle extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-
+    private String lat;
+    private String lon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_mapssingle);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        ArrayList<String> lat=getIntent().getStringArrayListExtra("latitude");
-        ArrayList<String> lon=getIntent().getStringArrayListExtra("longitude");
-        ArrayList<String> plate=getIntent().getStringArrayListExtra("plates");
-         for(int i=0;i<lat.size();i++){
-             LatLng located = new LatLng(Double.parseDouble(lat.get(i)),Double.parseDouble(lon.get(i)));
-             mMap.addMarker(new MarkerOptions().position(located).title("RAB 0"));//plate.get(i)
-             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(located,14.0f));
-        }
-
+       lat=getIntent().getStringExtra("latitude");
+       lon=getIntent().getStringExtra("longitude");
+        LatLng located = new LatLng(Double.parseDouble(lat),Double.parseDouble(lon));
+        mMap.addMarker(new MarkerOptions().position(located).title("Located"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(located,14.0f));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

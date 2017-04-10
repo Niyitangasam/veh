@@ -66,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button viewAllCar = (Button) findViewById(R.id.view_all);
+        viewAllCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,ListCarActivity.class));
+
+            }
+        });
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

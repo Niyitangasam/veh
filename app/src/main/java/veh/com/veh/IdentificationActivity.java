@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class IdentificationActivity extends AppCompatActivity {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class IdentificationActivity extends AppCompatActivity{
 
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
@@ -40,9 +44,15 @@ public class IdentificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 plateID=inputPlate.getText().toString();
-                createUser(plateID);
-                Toast.makeText(getApplicationContext(),"Plate Number Saved!",Toast.LENGTH_LONG).show();
-                finish();
+//                if(!isValidPlate(plateID)){
+//                    inputPlate.setError("Invalid Plate Number");
+//                    Toast.makeText(getApplicationContext(),"Invalid Plate Number!",Toast.LENGTH_LONG).show();
+//                }
+//                else {
+                    createUser(plateID);
+                    Toast.makeText(getApplicationContext(), "Plate Number Saved!", Toast.LENGTH_LONG).show();
+                    finish();
+//                }
             }
         });
 
@@ -82,9 +92,23 @@ public class IdentificationActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Failed to read Kid");
+                Log.e(TAG, "Failed to read Plate");
             }
         });
     }
+
+//    private boolean isValidPlate(String plate){
+//
+//       String PLATE_PATTERN= Pattern.compile("").toString();
+//
+//        Matcher matcher=PLATE_PATTERN.matches(plate);
+//
+//        if(matcher.matches()){
+//            return true;
+//        }
+//        return false;
+//    }
+
+
 
 }
