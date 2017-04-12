@@ -1,17 +1,21 @@
 package veh.com.veh;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -31,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import Models.Plate;
@@ -52,19 +57,61 @@ public class ListCarActivity extends ListActivity {
     private ListView listView;
     private  String listItemName;
     private String m_Text;
+    private EditText search;
+    private Vibrator vib;
+    private  AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_car);
-        listView = (ListView) findViewById(android.R.id.list);
 
+        setContentView(R.layout.activity_list_car);
+        initList();
+        search=(EditText) findViewById(R.id.txtsearch);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                  if(s.toString().equals("")){
+                      initList();
+                  }
+                  else{
+                      searchItem(s.toString());
+                  }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    public void searchItem(String look){
+
+        Iterator <String> iter= listValues.iterator();
+        while(iter.hasNext()){
+            String str=iter.next();
+            if(!str.contains(look)){
+               iter.remove();
+            }
+        }
+        myAdapter.notifyDataSetChanged();
+
+    }
+
+
+    public void initList(){
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseDatabase = mFirebaseInstance.getReference("identifications");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         email=mFirebaseUser.getEmail();
-
+        listView = (ListView) findViewById(android.R.id.list);
 
         mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -72,13 +119,14 @@ public class ListCarActivity extends ListActivity {
 
                 listValues = new ArrayList<String>();
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
-                        listValues.add(child.getValue(Plate.class).getPlateId());
+                    listValues.add(child.getValue(Plate.class).getPlateId());
 
                 }
                 text = (TextView) findViewById(R.id.mainText);
                 myAdapter = new ArrayAdapter <String>(getApplicationContext(), R.layout.row_layout, R.id.listText, listValues);
                 setListAdapter(myAdapter);
                 registerForContextMenu(listView);
+
 
 
             }
@@ -88,8 +136,13 @@ public class ListCarActivity extends ListActivity {
                 Log.d(TAG,"Error occured "+databaseError.getCode());
             }
         });
-
     }
+
+
+
+
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -115,8 +168,8 @@ public class ListCarActivity extends ListActivity {
         {
            m_Text = "";
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Edit "+menuItemName);
+         builder = new AlertDialog.Builder(this);
+            builder.setTitle("Edit "+ listItemName);
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
@@ -124,24 +177,38 @@ public class ListCarActivity extends ListActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
+                    if(!isValidPlate(m_Text)){
+                        vib= (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        vib.vibrate(120);
+                        Toast.makeText(getApplicationContext(),"Not a valid plate number entered", Toast.LENGTH_LONG).show();
 
-                    mFirebaseDatabase.orderByChild("plateId")
-                            .equalTo(listItemName)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.hasChildren()){
-                                        DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-                                        firstChild.getRef().child("plateId").setValue(m_Text);
+                        return;
+                    }
+                    else {
+                        mFirebaseDatabase.orderByChild("plateId")
+                                .equalTo(listItemName)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.hasChildren()) {
+                                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+
+
+                                            firstChild.getRef().child("plateId").setValue(m_Text);
+                                            Toast.makeText(getApplicationContext(), "Plate Updated!", Toast.LENGTH_LONG).show();
+
+
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.d(TAG,"Error occured "+databaseError.getCode());
-                                }
-                            });
-                    myAdapter.notifyDataSetChanged();
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.d(TAG, "Error occured " + databaseError.getCode());
+                                    }
+                                });
+                        myAdapter.notifyDataSetChanged();
+                    }
+
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -159,6 +226,7 @@ public class ListCarActivity extends ListActivity {
            // Toast.makeText(getApplicationContext(),"Edit is Selected "+ " On "+listItemName, Toast.LENGTH_LONG).show();
 
         }
+
         if (menuItemName.equals("Delete")){
             AlertDialog.Builder adb=new AlertDialog.Builder(ListCarActivity.this);
             adb.setTitle("Delete?");
@@ -256,4 +324,18 @@ public class ListCarActivity extends ListActivity {
 
         // text.setText("You clicked " + selectedItem + " at position " + position);
     }
+
+    private boolean isValidPlate(String plate){
+
+        if(plate.trim().isEmpty() || plate.length()<6 || !plate.contains("RNP ") ){
+            return false;
+
+
+        }
+        return true;
+    }
+    private void requestFocus (View view){
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
 }

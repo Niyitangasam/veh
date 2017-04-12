@@ -1,6 +1,8 @@
 package veh.com.veh;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,9 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,6 +38,9 @@ public class IdentificationActivity extends AppCompatActivity{
     private String userId, plateID;
     private EditText inputPlate;
     private Button btnSave;
+    private Vibrator vib;
+    private Animation animSkake;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,19 +48,23 @@ public class IdentificationActivity extends AppCompatActivity{
         inputPlate=(EditText) findViewById(R.id.plate);
 
         btnSave= (Button) findViewById(R.id.btn_save);
+        animSkake= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
+        vib= (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 plateID=inputPlate.getText().toString();
-//                if(!isValidPlate(plateID)){
-//                    inputPlate.setError("Invalid Plate Number");
-//                    Toast.makeText(getApplicationContext(),"Invalid Plate Number!",Toast.LENGTH_LONG).show();
-//                }
-//                else {
+                if(!isValidPlate(plateID)){
+                    inputPlate.setAnimation(animSkake);
+                    inputPlate.startAnimation(animSkake);
+                    vib.vibrate(120);
+                    return;
+                }
+                else {
                     createUser(plateID);
                     Toast.makeText(getApplicationContext(), "Plate Number Saved!", Toast.LENGTH_LONG).show();
                     finish();
-//                }
+                }
             }
         });
 
@@ -97,17 +109,20 @@ public class IdentificationActivity extends AppCompatActivity{
         });
     }
 
-//    private boolean isValidPlate(String plate){
-//
-//       String PLATE_PATTERN= Pattern.compile("").toString();
-//
-//        Matcher matcher=PLATE_PATTERN.matches(plate);
-//
-//        if(matcher.matches()){
-//            return true;
-//        }
-//        return false;
-//    }
+    private boolean isValidPlate(String plate){
+
+    if(plate.trim().isEmpty() || plate.length()<6 || !plate.contains("RNP ") ){
+
+        inputPlate.setError("Valid required In Upper(eg: RNP..)");
+        return false;
+
+
+    }
+        return true;
+    }
+    private void requestFocus (View view){
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
 
 
 
