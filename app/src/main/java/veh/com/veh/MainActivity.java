@@ -57,14 +57,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button addKid = (Button) findViewById(R.id.add_info);
-        addKid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,IdentificationActivity.class));
 
-            }
-        });
 
         Button viewAllCar = (Button) findViewById(R.id.view_all);
         viewAllCar.setOnClickListener(new View.OnClickListener() {

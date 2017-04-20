@@ -62,7 +62,8 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
     private FirebaseUser mFirebaseUser;
     private ArrayList<String> listLatitude;
     private ArrayList<String> listLongitude;
-    private ArrayList<String> listPlates;
+    private ArrayList<String> list;
+    private ArrayList<String> listPlates = new ArrayList<>();
     private String notSet="NOT SETTED";
     private static final int LOCATION_PERMISSION_ID = 1001;
 
@@ -94,7 +95,6 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
                             savedLatitude=child.getValue(User.class).getLatitude();
                             savedLongitude=child.getValue(User.class).getLongitude();
                             testEmail=child.getValue(User.class).getEmail();
-                            platesList(testEmail);
 
                             listLatitude.add(savedLatitude);
                             listLongitude.add(savedLongitude);
@@ -103,7 +103,6 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
                         Intent intent=new Intent(LocationActivity.this,MapsActivity.class);
                         intent.putStringArrayListExtra("latitude",listLatitude);
                         intent.putStringArrayListExtra("longitude",listLongitude);
-                        intent.putStringArrayListExtra("plates",listPlates);
                         startActivity(intent);
                     }
 
@@ -130,24 +129,21 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
         showLast();
     }
 
-    public void platesList(String Emailcoming){
+    public void platesList(){
         Toast.makeText(getApplicationContext(),"Now in plate list",Toast.LENGTH_LONG).show();
         mFirebaseInstan = FirebaseDatabase.getInstance();
         mFirebaseDB = mFirebaseInstan.getReference("identifications");
-       final String em=Emailcoming;
         mFirebaseDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                listPlates = new ArrayList<String>();
+                String plate;
 
                 for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    if(data.getValue(Identification.class).getEmail().equals(em)){
-                        listPlates.add(data.getValue(Identification.class).getPlateId());
+                    plate=data.getValue(Identification.class).getPlateId();
+                        listPlates.add(plate);
                     }
-                    else{
-                        listPlates.add(notSet);
-                    }
-                }
+
+
             }
 
             @Override
@@ -157,6 +153,7 @@ public class LocationActivity extends AppCompatActivity implements OnLocationUpd
         });
 
     }
+
     private void createUser(String latitude, String longitude) {
 
         mFirebaseAuth = FirebaseAuth.getInstance();
